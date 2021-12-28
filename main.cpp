@@ -2,6 +2,17 @@
 #include <fstream>
 #include <string>
 
+// saves info from file in a string and counts elements
+void read(std::fstream& myFile, std::string& str, int& count) {
+    std::string buffer;
+
+    while (getline(myFile, buffer)) {
+        str += buffer;
+        str += " ";
+        count++;
+    }
+}
+
 void main_menu() {
 
     std::cout << "1. See numbers\n";
@@ -55,21 +66,12 @@ int main()
     }
 
     // count
-    int m = 0, n = 0;
+    int n = 0, m = 0;
 
-    std::string buffer, numbers, functions;
+    std::string numbers, functions;
 
-    while (getline(myFile1, buffer)) {
-        numbers += buffer;
-        numbers += " ";
-        n++;
-    }
-
-    while (getline(myFile2, buffer)) {
-        functions += buffer;
-        functions += " ";
-        m++;
-    }
+    read(myFile1, numbers, n);
+    read(myFile2, functions, m);
 
     myFile1.close();
     myFile2.close();
