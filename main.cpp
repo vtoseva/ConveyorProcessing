@@ -1,15 +1,32 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
-// saves info from file in a string and counts elements
-void read(std::fstream& myFile, std::string& str, int& count) {
+// saves info from file in a vector
+void read(std::fstream& numbers, std::fstream& functions, std::vector<double>& nmb_vec, std::vector<char>& op_vec, std::vector<double>& arg_vec, int& n, int& m) {
     std::string buffer;
 
-    while (getline(myFile, buffer)) {
-        str += buffer;
-        str += " ";
-        count++;
+    while (getline(numbers, buffer)) {
+        nmb_vec.push_back(stod(buffer));
+        n++;
+    }
+
+    std::string argument;
+
+    while (getline(functions, buffer)) {
+        int i = 0;
+
+        while (i < buffer.length()) {
+            op_vec.push_back(buffer[i++]);
+            if (buffer[i] == '>' || buffer[i] == '<') {
+                op_vec.push_back(buffer[i++]);
+            }
+            argument = buffer[i++];
+            m++;
+        }
+
+        arg_vec.push_back(stod(argument));
     }
 }
 
@@ -68,10 +85,11 @@ int main()
     // count
     int n = 0, m = 0;
 
-    std::string numbers, functions;
+    std::vector<double> nmb_vec;
+    std::vector<double> arg_vec;
+    std::vector<char> op_vec;
 
-    read(myFile1, numbers, n);
-    read(myFile2, functions, m);
+    read(myFile1, myFile2, nmb_vec, op_vec, arg_vec, n, m);
 
     myFile1.close();
     myFile2.close();
