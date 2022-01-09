@@ -79,6 +79,22 @@ bool isInteger(double numb) {
     return 1;
 }
 
+void printMatrix(double** matrix, int rows, int cols) {
+    for (int row = 0; row < rows;row++) {
+        for (int col = 0; col < cols; col++) {
+            std::cout << matrix[row][col] << " ";
+        }
+        std::cout << '\n';
+    }
+}
+
+void deleteMatrix(double** matrix, int rows, int cols) {
+    for (int row = 0; row < rows; row++) {
+        delete[] matrix[row];
+    }
+    delete[] matrix;
+}
+
 int main()
 {
     std::fstream myFile1, myFile2;
