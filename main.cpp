@@ -95,6 +95,64 @@ void deleteMatrix(double** matrix, int rows, int cols) {
     delete[] matrix;
 }
 
+void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec, int& m, int& n) {
+    int rows = m;
+    int cols = n;
+
+    // dynamic matrix
+    double** matrix = new double* [rows];
+
+    for (int row = 0; row < rows; row++) {
+        matrix[row] = new double[cols];
+    }
+
+    for (int row = 0; row < rows;row++) {
+        int i = 0;
+
+        for (int col = 0; col < cols; col++) {
+            if (op_vec.at(i) == '+') {
+                matrix[row][col] = nmb_vec[row] + arg_vec[col];
+            }
+            else if (op_vec[i] == '-') {
+                matrix[row][col] = nmb_vec[row] - arg_vec[col];
+            }
+            else if (op_vec[i] == '*') {
+                matrix[row][col] = nmb_vec[row] * arg_vec[col];
+            }
+            else if (op_vec[i] == '/') {
+                matrix[row][col] = (arg_vec[col] == 0) ? 0 : nmb_vec[row] / arg_vec[col];
+            }
+            else if (op_vec[i] == '%') {
+                if (arg_vec[col] > 0 && nmb_vec[row] > 0 && isInteger(arg_vec[col]) && isInteger(nmb_vec[row])) {
+                    matrix[row][col] = (int)nmb_vec[row] % (int)arg_vec[col];
+                }
+                else matrix[row][col] = 0;
+            }
+            else if (op_vec[i++] == '<' && arg_vec[col] > 0) {
+                if (arg_vec[col] >= 0 && isInteger(arg_vec[col]) && isInteger(nmb_vec[row])) {
+                    int nmb = nmb_vec[row], arg = arg_vec[col];
+                    matrix[row][col] = nmb << arg;
+                }
+                else matrix[row][col] = 0;
+            }
+            else if (op_vec[i++] == '>' && arg_vec[col] != 0) {
+                if (arg_vec[col] >= 0 && isInteger(arg_vec[col]) && isInteger(nmb_vec[row])) {
+                    int nmb = nmb_vec[row], arg = arg_vec[col];
+                    matrix[row][col] = nmb >> arg;
+                }
+                else matrix[row][col] = 0;
+            }
+
+            i++;
+        }
+    }
+
+    printMatrix(matrix, rows, cols);
+
+    deleteMatrix(matrix, rows, cols);
+
+}
+
 int main()
 {
     std::fstream myFile1, myFile2;
