@@ -71,6 +71,14 @@ void options(int userInput) {
 void menu() {
 }
 
+bool isInteger(double numb) {
+    int temp = numb;
+    if ((numb - temp) > 0) {
+        return 0;
+    }
+    return 1;
+}
+
 int main()
 {
     std::fstream myFile1, myFile2;
