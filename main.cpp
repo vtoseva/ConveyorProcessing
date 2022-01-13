@@ -164,6 +164,39 @@ void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>
 
 }
 
+// calculates matrix with carry mode
+void carryMode(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec, int& m, int& n) {
+    //dynamic matrix
+    int rows = m;
+    int cols = n;
+    double** matrix = new double* [rows];
+
+    for (int row = 0; row < rows; row++) {
+        matrix[row] = new double[cols];
+    }
+
+    for (int row = 0; row < rows;row++) {
+        int i = 0;
+        for (int col = 0; col < cols; col++) {
+            if (col == 0) {
+                matrix[row][col] = calc(nmb_vec[row], op_vec[i], arg_vec[col]);
+            }
+            else matrix[row][col] = calc(nmb_vec[row] + matrix[row][col - 1], op_vec[i], arg_vec[col]);
+
+            if (op_vec[i] == '<' || op_vec[i] == '>') {
+                i++;
+            }
+
+            i++;
+        }
+    }
+
+    printMatrix(matrix, rows, cols);
+
+    deleteMatrix(matrix, rows, cols);
+
+}
+
 int main()
 {
     std::fstream myFile1, myFile2;
