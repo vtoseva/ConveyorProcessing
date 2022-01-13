@@ -95,6 +95,44 @@ void deleteMatrix(double** matrix, int rows, int cols) {
     delete[] matrix;
 }
 
+// does operation
+double calc(double nmb, char op, double arg) {
+    double result = 0;
+
+    if (op == '+') {
+        result = nmb + arg;
+    }
+    else if (op == '-') {
+        result = nmb - arg;
+    }
+    else if (op == '*') {
+        result = nmb * arg;
+    }
+    else if (op == '/') {
+        result = (arg == 0) ? 0 : nmb / arg;
+    }
+    else if (op == '%') {
+        if (arg > 0 && nmb > 0 && isInteger(arg) && isInteger(nmb)) {
+            result = (int)nmb % (int)arg;
+        }
+        else result = 0;
+    }
+    else if (op == '<') {
+        if (arg >= 0 && isInteger(arg) && isInteger(nmb)) {
+            result = (int)nmb << (int)arg;
+        }
+        else result = 0;
+    }
+    else if (op == '>') {
+        if (arg >= 0 && isInteger(arg) && isInteger(arg)) {
+            result = (int)nmb >> (int)arg;
+        }
+        else result = 0;
+    }
+
+    return result;
+}
+
 void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec, int& m, int& n) {
     int rows = m;
     int cols = n;
@@ -110,37 +148,10 @@ void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>
         int i = 0;
 
         for (int col = 0; col < cols; col++) {
-            if (op_vec.at(i) == '+') {
-                matrix[row][col] = nmb_vec[row] + arg_vec[col];
-            }
-            else if (op_vec[i] == '-') {
-                matrix[row][col] = nmb_vec[row] - arg_vec[col];
-            }
-            else if (op_vec[i] == '*') {
-                matrix[row][col] = nmb_vec[row] * arg_vec[col];
-            }
-            else if (op_vec[i] == '/') {
-                matrix[row][col] = (arg_vec[col] == 0) ? 0 : nmb_vec[row] / arg_vec[col];
-            }
-            else if (op_vec[i] == '%') {
-                if (arg_vec[col] > 0 && nmb_vec[row] > 0 && isInteger(arg_vec[col]) && isInteger(nmb_vec[row])) {
-                    matrix[row][col] = (int)nmb_vec[row] % (int)arg_vec[col];
-                }
-                else matrix[row][col] = 0;
-            }
-            else if (op_vec[i++] == '<' && arg_vec[col] > 0) {
-                if (arg_vec[col] >= 0 && isInteger(arg_vec[col]) && isInteger(nmb_vec[row])) {
-                    int nmb = nmb_vec[row], arg = arg_vec[col];
-                    matrix[row][col] = nmb << arg;
-                }
-                else matrix[row][col] = 0;
-            }
-            else if (op_vec[i++] == '>' && arg_vec[col] != 0) {
-                if (arg_vec[col] >= 0 && isInteger(arg_vec[col]) && isInteger(nmb_vec[row])) {
-                    int nmb = nmb_vec[row], arg = arg_vec[col];
-                    matrix[row][col] = nmb >> arg;
-                }
-                else matrix[row][col] = 0;
+            matrix[row][col] = calc(nmb_vec[row], op_vec[i], arg_vec[col]);
+
+            if (op_vec[i] == '<' || op_vec[i] == '>') {
+                i++;
             }
 
             i++;
