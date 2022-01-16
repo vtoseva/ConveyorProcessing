@@ -4,30 +4,62 @@
 #include <vector>
 
 // saves info from file in a vector
-void read(std::fstream& numbers, std::fstream& functions, std::vector<double>& nmb_vec, std::vector<char>& op_vec, std::vector<double>& arg_vec, int& n, int& m) {
+std::vector<double> readNumbers(std::fstream& numbers) {
+    std::vector<double> nmb_vec;
+
     std::string buffer;
 
-    while (getline(numbers, buffer)) {
+    while (!numbers.eof()) {
+        numbers >> buffer;
         nmb_vec.push_back(stod(buffer));
-        n++;
     }
 
-    std::string argument;
+    return nmb_vec;
+}
 
-    while (getline(functions, buffer)) {
-        int i = 0;
+std::vector<double> readFunctions(std::fstream& functions) {
+    std::vector<double> arg_vec;
 
-        while (i < buffer.length()) {
-            op_vec.push_back(buffer[i++]);
-            if (buffer[i] == '>' || buffer[i] == '<') {
-                op_vec.push_back(buffer[i++]);
-            }
-            argument = buffer[i++];
-            m++;
+    std::string buffer;
+
+    //ignore operator get number
+    while (!functions.eof()) {
+        functions >> buffer;
+
+        if (buffer[0] == '>' || buffer[0] == '<') {
+            buffer.erase(0, 2);
         }
+        else buffer.erase(0, 1);
 
-        arg_vec.push_back(stod(argument));
+        arg_vec.push_back(stod(buffer));
     }
+
+    return arg_vec;
+}
+
+std::vector<char> readOperators(std::fstream& functions) {
+    std::vector<char> op_vec;
+
+    std::string buffer;
+
+    // clears eof bit and seeks the beginning of the file
+    functions.clear();
+    functions.seekg(0, functions.beg);
+
+    // get just the operator
+    while (!functions.eof()) {
+        functions >> buffer;
+
+        if (buffer[0] == '>' || buffer[0] == '<') {
+            buffer.erase(2, buffer.size() - 1);
+        }
+        else buffer.erase(1, buffer.size() - 1);
+
+        std::copy(buffer.begin(), buffer.end(), std::back_inserter(op_vec));
+
+    }
+
+    return op_vec;
 }
 
 void main_menu() {
@@ -208,14 +240,12 @@ int main()
         return 1;
     }
 
-    // count
-    int n = 0, m = 0;
+    std::vector<double> nmb_vec = readNumbers(myFile1);
+    std::vector<double> arg_vec = readFunctions(myFile2);
+    std::vector<char> op_vec = readOperators(myFile2);
 
-    std::vector<double> nmb_vec;
-    std::vector<double> arg_vec;
-    std::vector<char> op_vec;
-
-    read(myFile1, myFile2, nmb_vec, op_vec, arg_vec, n, m);
+    // count of elements
+    int n = nmb_vec.size(), m = arg_vec.size();
 
     myFile1.close();
     myFile2.close();
