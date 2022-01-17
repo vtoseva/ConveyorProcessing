@@ -103,9 +103,9 @@ void options(int userInput) {
 void menu() {
 }
 
-bool isInteger(double numb) {
-    int temp = numb;
-    if ((numb - temp) > 0) {
+bool isInteger(double number) {
+    int temp = number;
+    if ((number - temp) > 0 || (number - temp) < 0) {
         return 0;
     }
     return 1;
@@ -118,6 +118,16 @@ void printMatrix(double** matrix, int rows, int cols) {
         }
         std::cout << '\n';
     }
+}
+
+double** makeMatrix(int m, int n) {
+    double** matrix = new double* [m];
+
+    for (int row = 0; row < m; row++) {
+        matrix[row] = new double[n];
+    }
+
+    return matrix;
 }
 
 void deleteMatrix(double** matrix, int rows, int cols) {
@@ -165,26 +175,20 @@ double calc(double nmb, char op, double arg) {
     return result;
 }
 
-void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec, int& m, int& n) {
-    int rows = m;
-    int cols = n;
+void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec) {
+    int rows = nmb_vec.size();
+    int cols = arg_vec.size();
 
-    // dynamic matrix
-    double** matrix = new double* [rows];
-
-    for (int row = 0; row < rows; row++) {
-        matrix[row] = new double[cols];
-    }
+    double** matrix = makeMatrix(rows, cols);
 
     for (int row = 0; row < rows;row++) {
         int i = 0;
-
         for (int col = 0; col < cols; col++) {
-            matrix[row][col] = calc(nmb_vec[row], op_vec[i], arg_vec[col]);
-
             if (op_vec[i] == '<' || op_vec[i] == '>') {
                 i++;
             }
+
+            matrix[row][col] = calc(nmb_vec[row], op_vec[i], arg_vec[col]);
 
             i++;
         }
@@ -193,19 +197,14 @@ void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>
     printMatrix(matrix, rows, cols);
 
     deleteMatrix(matrix, rows, cols);
-
 }
 
 // calculates matrix with carry mode
-void carryMode(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec, int& m, int& n) {
-    //dynamic matrix
-    int rows = m;
-    int cols = n;
-    double** matrix = new double* [rows];
+void carryMode(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec) {
+    int rows = nmb_vec.size();
+    int cols = arg_vec.size();
 
-    for (int row = 0; row < rows; row++) {
-        matrix[row] = new double[cols];
-    }
+    double** matrix = makeMatrix(rows, cols);
 
     for (int row = 0; row < rows;row++) {
         int i = 0;
@@ -226,7 +225,6 @@ void carryMode(const std::vector<double>& nmb_vec, const std::vector<char>& op_v
     printMatrix(matrix, rows, cols);
 
     deleteMatrix(matrix, rows, cols);
-
 }
 
 int main()
