@@ -66,6 +66,41 @@ void print(std::fstream& file) {
     std::cout << "\n";
 }
 
+void saveInNewFile(double** mat, int n, int m, bool carry) {
+    std::string input;
+
+    do {
+        std::cout << "Do you want to save this matrix in a new file?" << "\n";
+        std::cin >> input;
+    } while (input != "yes" && input != "Yes" && input != "no" && input != "No" && input != "1" && input != "0");
+
+    if (input == "0" || input == "no" || input == "No") {
+        return;
+    }
+    else {
+        std::fstream newFile;
+
+        if (!carry) {
+            newFile.open("matrix.txt", std::fstream::out);
+        }
+        else newFile.open("matrix_carry.txt", std::fstream::out);
+
+        if (!newFile.is_open()) {
+            return;
+        }
+
+        for (int row = 0; row < n;row++) {
+            for (int col = 0; col < m; col++) {
+                newFile << mat[row][col] << " ";
+            }
+            newFile << '\n';
+        }
+        std::cout << '\n';
+
+        newFile.close();
+    }
+}
+
 void main_menu() {
 
     std::cout << "1. See numbers\n";
