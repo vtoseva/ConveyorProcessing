@@ -23,7 +23,6 @@ std::vector<double> readFunctions(std::fstream& functions) {
 
     //ignore operator get number
     while (getline(functions, buffer)) {
-
         if (buffer[0] == '>' || buffer[0] == '<') {
             buffer.erase(0, 2);
         }
@@ -46,11 +45,7 @@ std::vector<char> readOperators(std::fstream& functions) {
 
     // get just the operator
     while (getline(functions, buffer)) {
-
-        if (buffer[0] == '>' || buffer[0] == '<') {
-            buffer.erase(2, buffer.size() - 1);
-        }
-        else buffer.erase(1, buffer.size() - 1);
+        buffer.erase(1, buffer.size() - 1);
 
         std::copy(buffer.begin(), buffer.end(), std::back_inserter(op_vec));
     }
@@ -64,10 +59,10 @@ void print(std::fstream& file) {
 
     std::string buffer;
 
-    while (getline(file, buffer))
-    {
+    while (getline(file, buffer)) {
         std::cout << buffer << " ";
     }
+
     std::cout << "\n";
 }
 
@@ -118,6 +113,26 @@ bool isInteger(double number) {
         return 0;
     }
     return 1;
+}
+
+bool isFunction(const std::string str) {
+    if (str[0] == '<') {
+        if (isNumber(str[2]) || str[1] != '<')
+            return 0;
+    }
+    else return true;
+
+    if (str[0] == '>') {
+        if (isNumber(str[2]) || str[1] != '>')
+            return 0;
+    }
+    else return true;
+
+    return (str[0] == '+' || str[0] == '-' || str[0] == '*' || str[0] == '/' || str[0] == '%') && isNumber(str[1]);
+}
+
+bool isNumber(const char c) {
+    return c >= '0' && c <= '9';
 }
 
 void printMatrix(double** matrix, int rows, int cols) {
