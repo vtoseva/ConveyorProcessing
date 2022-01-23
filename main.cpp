@@ -267,14 +267,20 @@ void getSaveInNewFile(double** mat, int n, int m, bool carry) {
     else saveInNewFile(mat, n, m, carry);
 }
 
-
 void printMatrix(double** matrix, int rows, int cols) {
+    std::cout << "=======================================================\n\n";
+
     for (int row = 0; row < rows;row++) {
+        std::cout << "                    ";
+
         for (int col = 0; col < cols; col++) {
             std::cout << matrix[row][col] << " ";
         }
+
         std::cout << '\n';
     }
+
+    std::cout << "\n=======================================================\n";
 }
 
 double** makeMatrix(int m, int n) {
@@ -332,8 +338,7 @@ double calc(double nmb, char op, double arg) {
     return result;
 }
 
-void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec) {
-    //dynamic matrix
+double** calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec) {
     int n = nmb_vec.size();
     int m = arg_vec.size();
 
@@ -345,7 +350,31 @@ void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>
         }
     }
 
+    return matrix;
+}
+
+void calculateMatFromMenu(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec) {
+    int n = nmb_vec.size();
+    int m = arg_vec.size();
+
+    double** matrix = makeMatrix(n, m);
+
+    matrix = calculateMatrix(nmb_vec, op_vec, arg_vec);
+
     printMatrix(matrix, n, m);
+
+    getSaveInNewFile(matrix, n, m, 0);
+
+    deleteMatrix(matrix, n, m);
+}
+
+// if option to save in file is chosen from the menu the matrix saved is without carry mode
+void saveFromMenu(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec) {
+    int n = nmb_vec.size();
+    int m = arg_vec.size();
+
+    double** matrix = makeMatrix(n, m);
+    matrix = calculateMatrix(nmb_vec, op_vec, arg_vec);
 
     saveInNewFile(matrix, n, m, 0);
 
@@ -436,7 +465,6 @@ void menu(std::vector<double>& nmb_vec, std::vector<char>& op_vec, std::vector<d
 
     menu(nmb_vec, op_vec, arg_vec);
 }
-
 
 int main()
 {
