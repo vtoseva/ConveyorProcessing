@@ -39,7 +39,7 @@ std::vector<char> readOperators(std::fstream& functions) {
 
     std::string buffer;
 
-    // clears eof bit and seeks the beginning of the file
+    // seeks the beginning of the file
     functions.clear();
     functions.seekg(0, functions.beg);
 
@@ -70,7 +70,7 @@ void printFunctions(const std::vector<double>& functions, const std::vector<char
 
     int m = functions.size();
 
-    for (int i = 0;i < m;i++) {
+    for (int i = 0; i < m; i++) {
         if (operators[i] == '<') {
             std::cout << '<';
         }
@@ -85,9 +85,11 @@ void printFunctions(const std::vector<double>& functions, const std::vector<char
 
 bool isInteger(double number) {
     int temp = number;
+
     if ((number - temp) > 0 || (number - temp) < 0) {
         return 0;
     }
+
     return 1;
 }
 
@@ -111,6 +113,7 @@ bool isNumber(const char c) {
     return c >= '0' && c <= '9';
 }
 
+// changes one number at a time
 void changeNumber(std::vector<double>& numbers) {
     int n = numbers.size();
     int pos;
@@ -138,10 +141,13 @@ void changeNumber(std::vector<double>& numbers) {
 
     std::cout << "\n=======================================================\n\n";
     std::cout << "                   The new numbers are:\n\n";
+
     printNumbers(numbers);
+
     std::cin.get();
 }
 
+// changes one function at a time
 void changeFunction(std::vector<double>& arguments, std::vector<char>& operators) {
     int m = arguments.size();
     int pos;
@@ -217,38 +223,48 @@ void getChangeFunction(std::vector<double>& arguments, std::vector<char>& operat
 }
 
 void saveInNewFile(double** mat, int n, int m, bool carry) {
+    std::fstream newFile;
+
+    if (!carry) {
+        newFile.open("matrix.txt", std::fstream::out);
+    }
+    else newFile.open("matrix_carry.txt", std::fstream::out);
+
+    if (!newFile.is_open()) {
+        return;
+    }
+
+    for (int row = 0; row < n;row++) {
+        for (int col = 0; col < m; col++) {
+            newFile << mat[row][col] << " ";
+        }
+        newFile << '\n';
+    }
+
+    newFile.close();
+
+    std::cout << "\n=======================================================\n\n";
+    std::cout << "                   The matrix was saved.\n\n";
+    std::cout << "=======================================================\n";
+
+    std::cin.get();
+}
+
+void getSaveInNewFile(double** mat, int n, int m, bool carry) {
     std::string input;
 
     do {
-        std::cout << "Do you want to save this matrix in a new file?" << "\n";
+        std::cout << "\n     Do you want to save this matrix in a new file?\n\n";
+        std::cout << "                 1. Yes         2. No" << "\n";
+        std::cout << "\n=======================================================\n\n                          ";
         std::cin >> input;
-    } while (input != "yes" && input != "Yes" && input != "no" && input != "No" && input != "1" && input != "0");
+        std::cout << "\x1B[2J\x1B[H";
+    } while (input != "yes" && input != "Yes" && input != "no" && input != "No" && input != "1" && input != "0" && input != "2");
 
-    if (input == "0" || input == "no" || input == "No") {
+    if (input == "0" || input == "no" || input == "No" || input != "2") {
         return;
     }
-    else {
-        std::fstream newFile;
-
-        if (!carry) {
-            newFile.open("matrix.txt", std::fstream::out);
-        }
-        else newFile.open("matrix_carry.txt", std::fstream::out);
-
-        if (!newFile.is_open()) {
-            return;
-        }
-
-        for (int row = 0; row < n;row++) {
-            for (int col = 0; col < m; col++) {
-                newFile << mat[row][col] << " ";
-            }
-            newFile << '\n';
-        }
-        std::cout << '\n';
-
-        newFile.close();
-    }
+    else saveInNewFile(mat, n, m, carry);
 }
 
 void main_menu() {
@@ -291,7 +307,6 @@ void options(int userInput) {
 
 void menu() {
 }
-
 
 void printMatrix(double** matrix, int rows, int cols) {
     for (int row = 0; row < rows;row++) {
