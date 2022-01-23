@@ -267,46 +267,6 @@ void getSaveInNewFile(double** mat, int n, int m, bool carry) {
     else saveInNewFile(mat, n, m, carry);
 }
 
-void main_menu() {
-
-    std::cout << "1. See numbers\n";
-    std::cout << "2. Change numbers\n";
-    std::cout << "3. See functions\n";
-    std::cout << "4. Change functions\n";
-    std::cout << "5. Calculate matrix\n";
-    std::cout << "6. Carry mode\n";
-    std::cout << "7. Save in a file\n";
-    std::cout << "8. Exit\n";
-
-    std::cout << "\n";
-
-    std::cout << "Choose option: \n";
-
-}
-
-void options(int userInput) {
-    switch (userInput) {
-    case 1:
-        break;
-    case 2:
-        break;
-    case 3:
-        break;
-    case 4:
-        break;
-    case 5:
-        break;
-    case 6:
-        break;
-    case 7:
-        break;
-    default:
-        break;
-    }
-}
-
-void menu() {
-}
 
 void printMatrix(double** matrix, int rows, int cols) {
     for (int row = 0; row < rows;row++) {
@@ -394,26 +354,89 @@ void calculateMatrix(const std::vector<double>& nmb_vec, const std::vector<char>
 
 // calculates matrix with carry mode
 void carryMode(const std::vector<double>& nmb_vec, const std::vector<char>& op_vec, const std::vector<double>& arg_vec) {
-    int n = nmb_vec.size();
-    int m = arg_vec.size();
+	int n = nmb_vec.size();
+	int m = arg_vec.size();
 
-    double** matrix = makeMatrix(n, m);
+	double** matrix = makeMatrix(n, m);
 
-    for (int row = 0; row < n;row++) {
-        for (int col = 0; col < m; col++) {
-            if (col == 0) {
-                matrix[row][col] = calc(nmb_vec[row], op_vec[col], arg_vec[col]);
-            }
-            else matrix[row][col] = calc(nmb_vec[row] + matrix[row][col - 1], op_vec[col], arg_vec[col]);
-        }
+	for (int row = 0; row < n;row++) {
+		for (int col = 0; col < m; col++) {
+			if (col == 0) {
+				matrix[row][col] = calc(nmb_vec[row], op_vec[col], arg_vec[col]);
+			}
+			else matrix[row][col] = calc(nmb_vec[row] + matrix[row][col - 1], op_vec[col], arg_vec[col]);
+		}
+	}
+
+	printMatrix(matrix, n, m);
+
+	getSaveInNewFile(matrix, n, m, 1);
+
+	deleteMatrix(matrix, n, m);
+}
+
+void main_menu() {
+    std::cout << "=======================================================" << "\n";
+
+    std::cout << "                  1. See numbers\n";
+    std::cout << "                  2. Change numbers\n";
+    std::cout << "                  3. See functions\n";
+    std::cout << "                  4. Change functions\n";
+    std::cout << "                  5. Calculate matrix\n";
+    std::cout << "                  6. Carry mode\n";
+    std::cout << "                  7. Save in a file\n";
+    std::cout << "                  8. Exit\n";
+
+    std::cout << "=======================================================" << "\n";
+
+    std::cout << "\n";
+}
+
+void menu(std::vector<double>& nmb_vec, std::vector<char>& op_vec, std::vector<double>& arg_vec) {
+    std::cout << "\x1B[2J\x1B[H";
+
+    int userInput;
+
+    do {
+        main_menu();
+        std::cout << "                   Choose option: ";
+        std::cin >> userInput;
+        std::cout << "\n=======================================================\n";
+        std::cout << "\x1B[2J\x1B[H";
+    } while (userInput > 8 || userInput < 1);
+
+    // Exit
+    if (userInput == 8) {
+        return;
     }
 
-    printMatrix(matrix, n, m);
+    switch (userInput) {
+    case 1: printNumbers(nmb_vec);
+        getChangeNumber(nmb_vec);
+        break;
+    case 2: changeNumber(nmb_vec);
+        break;
+    case 3: printFunctions(arg_vec, op_vec);
+        getChangeFunction(arg_vec, op_vec);
+        break;
+    case 4: changeFunction(arg_vec, op_vec);
+        break;
+    case 5:
+        calculateMatFromMenu(nmb_vec, op_vec, arg_vec);
+        break;
+    case 6: carryMode(nmb_vec, op_vec, arg_vec);
+        break;
+    case 7: saveFromMenu(nmb_vec, op_vec, arg_vec);
+        break;
+    default:
+        break;
+    }
 
-    saveInNewFile(matrix, n, m, 1);
+    std::cin.get();
 
-    deleteMatrix(matrix, n, m);
+    menu(nmb_vec, op_vec, arg_vec);
 }
+
 
 int main()
 {
@@ -423,6 +446,7 @@ int main()
     myFile2.open("functions.txt", std::fstream::in);
 
     if (!myFile1.is_open() || !myFile2.is_open()) {
+        std::cout << "Error opening file";
         return 1;
     }
 
@@ -430,11 +454,10 @@ int main()
     std::vector<double> arg_vec = readFunctions(myFile2);
     std::vector<char> op_vec = readOperators(myFile2);
 
-    // count of elements
-    int n = nmb_vec.size(), m = arg_vec.size();
-
     myFile1.close();
     myFile2.close();
+
+    menu(nmb_vec, op_vec, arg_vec);
 
     return 0;
 }
