@@ -1,3 +1,17 @@
+/**
+*
+* Solution to course project # 1
+* Introduction to programming course
+* Faculty of Mathematics and Informatics of Sofia University
+* Winter semester 2021/2022
+*
+* @author Violina Toseva
+* @idnumber 7MI0600070
+* @compiler VC
+*
+* Menu functionality declaration
+*
+*/
 #ifndef MENU_FUNCTIONS
 #define MENU_FUNCTIONS
 
