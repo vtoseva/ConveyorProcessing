@@ -53,17 +53,63 @@ std::vector<char> readOperators(std::fstream& functions) {
     return op_vec;
 }
 
-void print(std::fstream& file) {
-    file.clear();
-    file.seekg(0, file.beg);
+void printNumbers(const std::vector<double>& numbers) {
+    std::cout << "=======================================================\n\n";
+    std::cout << "                    ";
 
-    std::string buffer;
-
-    while (getline(file, buffer)) {
-        std::cout << buffer << " ";
+    for (double number : numbers) {
+        std::cout << number << " ";
     }
 
-    std::cout << "\n";
+    std::cout << "\n\n=======================================================\n";
+}
+
+void changeNumber(std::vector<double>& numbers) {
+    int n = numbers.size();
+    int pos;
+
+    do {
+        printNumbers(numbers);
+        std::cout << "=======================================================\n\n";
+        std::cout << "  The number on which position do you want to change?\n";
+        std::cout << "\n=======================================================\n\n                          ";
+        std::cin >> pos;
+        std::cout << "\x1B[2J\x1B[H";
+    } while (pos < 1 || pos > n);
+
+    std::string new_number;
+
+    do {
+        std::cout << "=======================================================\n\n";
+        std::cout << "               Please write the new number:\n";
+        std::cout << "\n=======================================================\n\n                            ";
+        std::cin >> new_number;
+        std::cout << "\x1B[2J\x1B[H";
+    } while (!isNumber(new_number[0]));
+
+    numbers[pos - 1] = stod(new_number);
+
+    std::cout << "\n=======================================================\n\n";
+    std::cout << "                   The new numbers are:\n\n";
+    printNumbers(numbers);
+    std::cin.get();
+}
+
+void getChangeNumber(std::vector<double>& numbers) {
+    std::string input;
+
+    do {
+        std::cout << "\n            Do you want to change a number?\n\n";
+        std::cout << "                 1. Yes         2. No" << "\n";
+        std::cout << "\n=======================================================\n\n                            ";
+        std::cin >> input;
+        std::cout << "\x1B[2J\x1B[H";
+    } while (input != "yes" && input != "Yes" && input != "no" && input != "No" && input != "1" && input != "0" && input != "2");
+
+    if (input == "0" || input == "no" || input == "No" || input == "2") {
+        return;
+    }
+    else changeNumber(numbers);
 }
 
 void saveInNewFile(double** mat, int n, int m, bool carry) {
