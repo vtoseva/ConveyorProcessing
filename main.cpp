@@ -64,6 +64,53 @@ void printNumbers(const std::vector<double>& numbers) {
     std::cout << "\n\n=======================================================\n";
 }
 
+void printFunctions(const std::vector<double>& functions, const std::vector<char>& operators) {
+    std::cout << "=======================================================\n\n";
+    std::cout << "                  ";
+
+    int m = functions.size();
+
+    for (int i = 0;i < m;i++) {
+        if (operators[i] == '<') {
+            std::cout << '<';
+        }
+        if (operators[i] == '>') {
+            std::cout << '>';
+        }
+        std::cout << operators[i] << functions[i] << " ";
+    }
+
+    std::cout << "\n\n=======================================================\n";
+}
+
+bool isInteger(double number) {
+    int temp = number;
+    if ((number - temp) > 0 || (number - temp) < 0) {
+        return 0;
+    }
+    return 1;
+}
+
+bool isFunction(const std::string str) {
+    if (str[0] == '<') {
+        if (!isNumber(str[2]) || str[1] != '<')
+            return 0;
+    }
+    else return true;
+
+    if (str[0] == '>') {
+        if (!isNumber(str[2]) || str[1] != '>')
+            return 0;
+    }
+    else return true;
+
+    return (str[0] == '+' || str[0] == '-' || str[0] == '*' || str[0] == '/' || str[0] == '%') && isNumber(str[1]);
+}
+
+bool isNumber(const char c) {
+    return c >= '0' && c <= '9';
+}
+
 void changeNumber(std::vector<double>& numbers) {
     int n = numbers.size();
     int pos;
@@ -95,6 +142,46 @@ void changeNumber(std::vector<double>& numbers) {
     std::cin.get();
 }
 
+void changeFunction(std::vector<double>& arguments, std::vector<char>& operators) {
+    int m = arguments.size();
+    int pos;
+
+    do {
+        printFunctions(arguments, operators);
+        std::cout << "=======================================================\n\n";
+        std::cout << "  The function on which position do you want to change?\n";
+        std::cout << "\n=======================================================\n\n                          ";
+        std::cin >> pos;
+        std::cout << "\x1B[2J\x1B[H";
+    } while (pos < 1 || pos > m);
+
+    std::string new_function;
+
+    do {
+        std::cout << "=======================================================\n\n";
+        std::cout << "             Please write the new function:\n";
+        std::cout << "\n=======================================================\n\n                            ";
+        std::cin >> new_function;
+        std::cout << "\x1B[2J\x1B[H";
+    } while (!isFunction(new_function));
+
+    operators[pos - 1] = (new_function[0]);
+
+    if (new_function[0] == '>' || new_function[0] == '<') {
+        new_function.erase(0, 2);
+    }
+    else new_function.erase(0, 1);
+
+    arguments[pos - 1] = stod(new_function);
+
+    std::cout << "\n=======================================================\n\n";
+    std::cout << "                 The new functions are:\n\n";
+
+    printFunctions(arguments, operators);
+
+    std::cin.get();
+}
+
 void getChangeNumber(std::vector<double>& numbers) {
     std::string input;
 
@@ -110,6 +197,23 @@ void getChangeNumber(std::vector<double>& numbers) {
         return;
     }
     else changeNumber(numbers);
+}
+
+void getChangeFunction(std::vector<double>& arguments, std::vector<char>& operators) {
+    std::string input;
+
+    do {
+        std::cout << "\n           Do you want to change a function?\n\n";
+        std::cout << "                 1. Yes         2. No" << "\n";
+        std::cout << "\n=======================================================\n\n                            ";
+        std::cin >> input;
+        std::cout << "\x1B[2J\x1B[H";
+    } while (input != "yes" && input != "Yes" && input != "no" && input != "No" && input != "1" && input != "0" && input != "2");
+
+    if (input == "0" || input == "no" || input == "No" || input == "2") {
+        return;
+    }
+    else changeFunction(arguments, operators);
 }
 
 void saveInNewFile(double** mat, int n, int m, bool carry) {
@@ -188,33 +292,6 @@ void options(int userInput) {
 void menu() {
 }
 
-bool isInteger(double number) {
-    int temp = number;
-    if ((number - temp) > 0 || (number - temp) < 0) {
-        return 0;
-    }
-    return 1;
-}
-
-bool isFunction(const std::string str) {
-    if (str[0] == '<') {
-        if (isNumber(str[2]) || str[1] != '<')
-            return 0;
-    }
-    else return true;
-
-    if (str[0] == '>') {
-        if (isNumber(str[2]) || str[1] != '>')
-            return 0;
-    }
-    else return true;
-
-    return (str[0] == '+' || str[0] == '-' || str[0] == '*' || str[0] == '/' || str[0] == '%') && isNumber(str[1]);
-}
-
-bool isNumber(const char c) {
-    return c >= '0' && c <= '9';
-}
 
 void printMatrix(double** matrix, int rows, int cols) {
     for (int row = 0; row < rows;row++) {
